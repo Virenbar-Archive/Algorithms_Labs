@@ -1,4 +1,4 @@
-unit Main;
+п»їunit Main;
 
 interface
 
@@ -64,7 +64,7 @@ begin
   PointsNumber:=Trunc(PointsMax.Value);
 end;
 
-//Иницилизация при открытии
+//РРЅРёС†РёР»РёР·Р°С†РёСЏ РїСЂРё РѕС‚РєСЂС‹С‚РёРё
 procedure TMainWindow.FormCreate(Sender: TObject);
 var
   PoleRect:TRectF;
@@ -159,7 +159,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-//Кнопки
+//РљРЅРѕРїРєРё
 //------------------------------------------------------------------------------
 
 procedure TMainWindow.GenerateClick(Sender: TObject);
