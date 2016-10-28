@@ -1,0 +1,3 @@
+inherited MainWindow_Windows: TMainWindow_Windows
+  DesignerMasterStyle = 0
+end
