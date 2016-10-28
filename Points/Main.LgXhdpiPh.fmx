@@ -5,11 +5,17 @@ inherited MainWindow_LgXhdpiPh: TMainWindow_LgXhdpiPh
   inherited Pole: TImage
     Size.Width = 435.000000000000000000
   end
+  inherited Edit1: TEdit
+    Size.Height = 32.000000000000000000
+  end
   inherited Computation: TAniIndicator
     Size.Width = 419.000000000000000000
   end
   inherited StatusBar: TStatusBar
     Position.Y = 673.000000000000000000
     Size.Width = 450.000000000000000000
+  end
+  inherited Edit2: TEdit
+    Size.Height = 32.000000000000000000
   end
 end

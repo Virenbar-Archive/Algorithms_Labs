@@ -74,6 +74,7 @@ object MainWindow: TMainWindow
       object Lab1Stupid: TMenuItem
         Locked = True
         Text = #1058#1091#1087#1086#1081' '#1084#1077#1090#1086#1076
+        OnClick = Lab1StupidClick
       end
       object Lab1SmartPre: TMenuItem
         Locked = True
