@@ -3,24 +3,22 @@
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,System.Diagnostics,Math,
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,System.Diagnostics,Math,System.Generics.Collections,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Edit, FMX.EditBox, FMX.NumberBox,
   FMX.Menus;
 
 type
   TMainWindow = class(TForm)
-    Generate: TButton;
-    CountPoints: TButton;
     Pole: TImage;
     PointsMax: TNumberBox;
-    Edit1: TEdit;
+    CountResult: TEdit;
     MainMenu: TMainMenu;
     Lab1Menu: TMenuItem;
     Lab1Generate: TMenuItem;
     Computation: TAniIndicator;
     StatusBar: TStatusBar;
-    Edit2: TEdit;
+    Time1: TEdit;
     Label1: TLabel;
     Lab1Stupid: TMenuItem;
     Lab1SmartPre: TMenuItem;
@@ -28,7 +26,8 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
-    procedure GenerateClick(Sender: TObject);
+    Time2: TEdit;
+    Time3: TEdit;
     procedure PointsMaxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Lab1GenerateClick(Sender: TObject);
@@ -36,6 +35,10 @@ type
       Shift: TShiftState; X, Y: Single);
     procedure PoleMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Single);
     procedure Lab1StupidClick(Sender: TObject);
+    procedure Lab1SmartPreClick(Sender: TObject);
+    procedure Lab1SmartClick(Sender: TObject);
+    procedure PoleMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Single);
   private
     { Private declarations }
   public
@@ -46,6 +49,7 @@ type
     Top,Right,Bottom,Left:Single;
     P1,P2,P3,P4:TPointF;
   end;
+  TSingleArray = Array of single;
 var
   MainWindow: TMainWindow;
   Points: Array of TPointF;
@@ -53,6 +57,10 @@ var
   PointsCount:integer;
   Stopwatch:TStopwatch;
   Selector:TSelector;
+
+  GSortX,GSortY:TSingleDynArray;
+  DominationPoints:Array of array of integer;
+
 implementation
 
 {$R *.fmx}
@@ -72,8 +80,56 @@ begin
   Selector.Right:=Math.MaxValue([Selector.RectAB.Left,Selector.RectAB.Right]);
   Selector.Top:=Math.MinValue([Selector.RectAB.Top,Selector.RectAB.Bottom]);
   Selector.Bottom:=Math.MaxValue([Selector.RectAB.Top,Selector.RectAB.Bottom]);
+
+  {
+  Был затуп
+  3-4
+  | |
+  2-1
+  Точки прямоугольника
+  }
+
+  Selector.P1:=PointF(Selector.Right,Selector.Bottom);
+  Selector.P2:=PointF(Selector.Left,Selector.Bottom);
+  Selector.P3:=PointF(Selector.Left,Selector.Top);
+  Selector.P4:=PointF(Selector.Right,Selector.Top);
 end;
 
+function SortArray(Sort:TSingleDynArray): TSingleDynArray;
+var
+  i,j:integer;
+  temp:single;
+begin
+  for i := 0 to Length(Sort)-1 do
+    for j := 0 to Length(Sort)-2-i do
+      if Sort[j]>Sort[j+1] then
+      begin
+        temp:=Sort[j+1];
+        Sort[j+1]:=Sort[j];
+        Sort[j]:=temp;
+      end;
+  SetLength(Result,Length(Sort));
+  Result:=Sort;
+end;
+
+function BinarySearch(Sort:TSingleDynArray;Value:Single):Integer;
+var
+  L,H:Integer;
+  mid:integer;
+begin
+  L:=0;
+  H:=Length(Sort)-1;
+  while H-L>1 do
+  begin
+    mid:=(H+L) div 2;
+    if Value<=Sort[mid] then H:=mid
+    else L:=mid
+  end;
+  if Value<Sort[L] then
+    Result:=L
+  else
+    Result:=H;
+end;
 //Иницилизация при открытии
 procedure TMainWindow.FormCreate(Sender: TObject);
 var
@@ -99,7 +155,8 @@ begin
     EndScene;
   end;
   Selector.RectAB:=RectF(0+20-0.5,0+20-0.5,MaxX-20.5,MaxY-20.5);
-  //Computation.Enabled:=true;
+
+  Computation.Enabled:=false;
 end;
 
 procedure DrawPoints(); forward;
@@ -110,15 +167,12 @@ var
   x,y:Extended;
 begin
   SetLength(Points,PointsCount);
-  //Stopwatch.Start;
-  for i := 1 to PointsCount do
+  for i := 0 to PointsCount-1 do
   begin
     X:=Random(MaxX-100)+50-0.5;
     Y:=Random(MaxY-100)+50-0.5;
     Points[i]:=PointF(X,Y);
   end;
-  //Stopwatch.Stop;
-  //MainWindow.Edit1.Text:=IntToStr(Stopwatch.ElapsedMilliseconds);
   DrawPoints();
 end;
 
@@ -134,7 +188,7 @@ begin
     BeginScene;
     Clear(TAlphaColors.White);
     //DrawLine(Points[1],Points[5],1);
-    for i := 1 to PointsCount do
+    for i := 0 to PointsCount-1 do
       //DrawLine(TempPoints[i],TempPoints[i],100);
       DrawLine(Points[i],Points[i],100);
     DrawRect(Selector.RectAB,0,0,AllCorners,100);
@@ -144,31 +198,81 @@ end;
 
 procedure StupidCompute();
 var
-  i,Count: Integer;
+  i,Count,T,Time: Integer;
 begin
-  //--
-  SetBorder();
-  Count:=0;
+  //MainWindow.Computation.Enabled:=true;
+  //MainWindow.Computation.Visible:=true;
+
   Stopwatch.Reset;
   Stopwatch.Start;
-  for i := 1 to PointsCount do
-  //begin
-    if math.InRange(Points[i].X,Selector.Left,Selector.Right) and math.InRange(Points[i].Y,Selector.Top,Selector.Bottom)
-    then Inc(Count);
-  //end;
+  for T := 1 to 100000 do
+  begin
+    Count:=0;
+    for i := 0 to PointsCount-1 do
+      if math.InRange(Points[i].X,Selector.Left,Selector.Right) and math.InRange(Points[i].Y,Selector.Top,Selector.Bottom)
+      then Inc(Count);
+  end;
   Stopwatch.Stop;
-  MainWindow.Edit2.Text:=IntToStr(Stopwatch.ElapsedMilliseconds);
-  MainWindow.Edit1.Text:=FloatToStr(Count);
+  MainWindow.Time1.Text:=IntToStr(Stopwatch.ElapsedMilliseconds div 100000) +'.'+ IntToStr(Stopwatch.ElapsedMilliseconds mod 100000);
+  MainWindow.CountResult.Text:=IntToStr(Count);
+
+  //MainWindow.Computation.Enabled:=false;
+  //MainWindow.Computation.Visible:=false;
 end;
 
 procedure SmartComputePre();
+var
+  i,j,c,Count:integer;
+  SortX,SortY:TSingleDynArray;
 begin
-  //--
+  Stopwatch.Reset;
+  Stopwatch.Start;
+
+  SetLength(SortX,PointsCount+1);
+  SetLength(SortY,PointsCount+1);
+  for i := 0 to PointsCount-1 do begin
+    SortX[i]:=Points[i].X;
+    SortY[i]:=Points[i].Y;
+  end;
+  SortX[PointsCount]:=MaxX;
+  SortY[PointsCount]:=MaxY;
+  SortX:=SortArray(SortX);
+  SortY:=SortArray(SortY);
+
+  SetLength(DominationPoints,PointsCount+1,PointsCount+1);
+  for i := 0 to Length(SortX)-1 do
+    for j := 0 to Length(SortY)-1 do begin
+      Count:=0;
+      for c := 0 to PointsCount-1 do
+        if (Points[c].X<SortX[i]) and (Points[c].Y<SortY[j]) then Inc(Count);
+
+      DominationPoints[i][j]:=Count;
+    end;
+
+  Stopwatch.Stop;
+  GSortX:=SortX;
+  GSortY:=SortY;
+  MainWindow.Time2.Text:=IntToStr(Stopwatch.ElapsedMilliseconds);
 end;
 
 procedure SmartCompute();
+var
+  T,DomP1,DomP2,DomP3,DomP4:Integer;
 begin
-  //--
+  Stopwatch.Reset;
+  Stopwatch.Start;
+  for T := 1 to 100000 do
+  begin
+    DomP1:=DominationPoints[BinarySearch(GSortX,Selector.P1.X)][BinarySearch(GSortY,Selector.P1.Y)];
+    DomP2:=DominationPoints[BinarySearch(GSortX,Selector.P2.X)][BinarySearch(GSortY,Selector.P2.Y)];
+    DomP3:=DominationPoints[BinarySearch(GSortX,Selector.P3.X)][BinarySearch(GSortY,Selector.P3.Y)];
+    DomP4:=DominationPoints[BinarySearch(GSortX,Selector.P4.X)][BinarySearch(GSortY,Selector.P4.Y)];
+  end;
+  Stopwatch.Stop;
+  MainWindow.Time3.Text:=IntToStr(Stopwatch.ElapsedMilliseconds div 100000) +'.'+ IntToStr(Stopwatch.ElapsedMilliseconds mod 100000);
+  //MainWindow.Time3.Text:=IntToStr(Stopwatch.ElapsedTicks);
+  MainWindow.CountResult.Text:=IntToStr(DomP1-DomP2-DomP4+DomP3);
+  //TArray.BinarySearch() ;
 end;
 
 procedure CheckRect();
@@ -183,22 +287,25 @@ end;
 //------------------------------------------------------------------------------
 //Кнопки
 //------------------------------------------------------------------------------
-
-procedure TMainWindow.GenerateClick(Sender: TObject);
-begin
-  GeneratePoints();
-end;
-
+//Lab1
 procedure TMainWindow.Lab1GenerateClick(Sender: TObject);
 begin
   //StatusBar.tab
   GeneratePoints();
 end;
-
 procedure TMainWindow.Lab1StupidClick(Sender: TObject);
 begin
   StupidCompute();
 end;
+procedure TMainWindow.Lab1SmartPreClick(Sender: TObject);
+begin
+  SmartComputePre();
+end;
+procedure TMainWindow.Lab1SmartClick(Sender: TObject);
+begin
+  SmartCompute();
+end;
+//--
 
 procedure TMainWindow.PoleMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Single);
@@ -224,6 +331,12 @@ begin
     DrawPoints();
   end;
   CheckRect();
+end;
+
+procedure TMainWindow.PoleMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Single);
+begin
+  SetBorder;
 end;
 
 end.

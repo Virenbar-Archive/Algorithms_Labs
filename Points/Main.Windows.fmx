@@ -1,3 +1,6 @@
 inherited MainWindow_Windows: TMainWindow_Windows
   DesignerMasterStyle = 0
+  inherited Computation: TAniIndicator
+    Enabled = True
+  end
 end

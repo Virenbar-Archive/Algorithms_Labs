@@ -1,20 +1,14 @@
-﻿[CountPoints]
-Coordinates=233,10,85,58
-
-[Pole]
+﻿[Pole]
 Coordinates=64,10,45,58
 
-[Edit1]
-Coordinates=10,10,44,58
-Visible=True
-
 []
-Coordinates=261,87,91,36
+Coordinates=119,10,104,80
+ExplicitSubNodes=Visible
 
 [PointsMax]
 Coordinates=10,78,96,58
 
-[Generate]
-Coordinates=119,10,104,80
-ExplicitSubNodes=Visible
+[CountResult]
+Coordinates=10,10,44,58
+Visible=True
 

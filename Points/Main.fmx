@@ -11,22 +11,6 @@ object MainWindow: TMainWindow
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
   DesignerMasterStyle = 0
-  object Generate: TButton
-    Position.X = 8.000000000000000000
-    Position.Y = 448.000000000000000000
-    Size.Width = 81.000000000000000000
-    Size.Height = 22.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 0
-    Text = 'Generate'
-    OnClick = GenerateClick
-  end
-  object CountPoints: TButton
-    Position.X = 96.000000000000000000
-    Position.Y = 448.000000000000000000
-    TabOrder = 1
-    Text = 'Count'
-  end
   object Pole: TImage
     MultiResBitmap = <
       item
@@ -39,25 +23,26 @@ object MainWindow: TMainWindow
     Size.PlatformDefault = False
     OnMouseDown = PoleMouseDown
     OnMouseMove = PoleMouseMove
+    OnMouseUp = PoleMouseUp
   end
   object PointsMax: TNumberBox
     Touch.InteractiveGestures = [LongTap, DoubleTap]
-    TabOrder = 3
+    TabOrder = 1
     Cursor = crIBeam
     Min = 1.000000000000000000
     Max = 100000.000000000000000000
     Value = 1000.000000000000000000
-    Position.X = 184.000000000000000000
-    Position.Y = 448.000000000000000000
+    Position.X = 96.000000000000000000
+    Position.Y = 440.000000000000000000
     Hint = 'Enter number of points'
     OnChange = PointsMaxChange
   end
-  object Edit1: TEdit
+  object CountResult: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
     TabOrder = 5
     Position.X = 352.000000000000000000
-    Position.Y = 448.000000000000000000
-    Size.Width = 281.000000000000000000
+    Position.Y = 440.000000000000000000
+    Size.Width = 280.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
   end
@@ -79,10 +64,12 @@ object MainWindow: TMainWindow
       object Lab1SmartPre: TMenuItem
         Locked = True
         Text = #1055#1088#1077#1076#1086#1073#1088#1072#1073#1086#1090#1082#1072
+        OnClick = Lab1SmartPreClick
       end
       object Lab1Smart: TMenuItem
         Locked = True
         Text = #1059#1084#1085#1099#1081' '#1084#1077#1090#1086#1076
+        OnClick = Lab1SmartClick
       end
     end
   end
@@ -93,7 +80,6 @@ object MainWindow: TMainWindow
     Size.Width = 609.000000000000000000
     Size.Height = 409.000000000000000000
     Size.PlatformDefault = False
-    Style = Circular
   end
   object StatusBar: TStatusBar
     Position.Y = 538.000000000000000000
@@ -123,12 +109,30 @@ object MainWindow: TMainWindow
       Text = 'Label1'
     end
   end
-  object Edit2: TEdit
+  object Time1: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
     TabOrder = 4
     Position.X = 352.000000000000000000
-    Position.Y = 480.000000000000000000
-    Size.Width = 281.000000000000000000
+    Position.Y = 464.000000000000000000
+    Size.Width = 280.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Time2: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 3
+    Position.X = 352.000000000000000000
+    Position.Y = 488.000000000000000000
+    Size.Width = 280.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Time3: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 2
+    Position.X = 352.000000000000000000
+    Position.Y = 512.000000000000000000
+    Size.Width = 280.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
   end
