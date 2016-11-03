@@ -213,7 +213,7 @@ begin
       then Inc(Count);
   end;
   Stopwatch.Stop;
-  MainWindow.Time1.Text:=IntToStr(Stopwatch.ElapsedMilliseconds div 100000) +'.'+ IntToStr(Stopwatch.ElapsedMilliseconds mod 100000);
+  MainWindow.Time1.Text:=FloatToStr(Stopwatch.ElapsedMilliseconds/100000/1000);
   MainWindow.CountResult.Text:=IntToStr(Count);
 
   //MainWindow.Computation.Enabled:=false;
@@ -252,7 +252,7 @@ begin
   Stopwatch.Stop;
   GSortX:=SortX;
   GSortY:=SortY;
-  MainWindow.Time2.Text:=IntToStr(Stopwatch.ElapsedMilliseconds);
+  MainWindow.Time2.Text:=FloatToStr(Stopwatch.ElapsedMilliseconds/1000);
 end;
 
 procedure SmartCompute();
@@ -269,7 +269,7 @@ begin
     DomP4:=DominationPoints[BinarySearch(GSortX,Selector.P4.X)][BinarySearch(GSortY,Selector.P4.Y)];
   end;
   Stopwatch.Stop;
-  MainWindow.Time3.Text:=IntToStr(Stopwatch.ElapsedMilliseconds div 100000) +'.'+ IntToStr(Stopwatch.ElapsedMilliseconds mod 100000);
+  MainWindow.Time3.Text:=FloatToStr(Stopwatch.ElapsedMilliseconds/100000/1000);
   //MainWindow.Time3.Text:=IntToStr(Stopwatch.ElapsedTicks);
   MainWindow.CountResult.Text:=IntToStr(DomP1-DomP2-DomP4+DomP3);
   //TArray.BinarySearch() ;
