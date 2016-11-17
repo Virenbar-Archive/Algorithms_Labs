@@ -28,6 +28,9 @@ type
     Label4: TLabel;
     Time2: TEdit;
     Time3: TEdit;
+    RadioS: TRadioButton;
+    RadioC: TRadioButton;
+    RadioG: TRadioButton;
     procedure PointsMaxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Lab1GenerateClick(Sender: TObject);
@@ -161,7 +164,7 @@ end;
 
 procedure DrawPoints(); forward;
 
-procedure GeneratePoints();
+procedure GeneratePointsSquare();
 var
   i:Integer;
   x,y:Extended;
@@ -169,8 +172,38 @@ begin
   SetLength(Points,PointsCount);
   for i := 0 to PointsCount-1 do
   begin
-    X:=Random(MaxX-100)+50-0.5;
-    Y:=Random(MaxY-100)+50-0.5;
+    X:=Random(MaxX-100)+50;
+    Y:=Random(MaxY-100)+50;
+    Points[i]:=PointF(X,Y);
+  end;
+  DrawPoints();
+end;
+
+procedure GeneratePointsCircle();
+var
+  i:Integer;
+  x,y,R,Fi:Extended;
+begin
+  SetLength(Points,PointsCount);
+  for i := 0 to PointsCount-1 do
+  begin
+    R:=Random((MaxY div 2)-100);
+    Fi:=Random(360+1);
+    Points[i]:=PointF(MaxX/2+R*sin(DegToRad(Fi)),MaxY/2+R*cos(DegToRad(Fi)));
+  end;
+  DrawPoints();
+end;
+
+procedure GeneratePointsGauss();
+var
+  i:Integer;
+  x,y:Extended;
+begin
+  SetLength(Points,PointsCount);
+  for i := 0 to PointsCount-1 do
+  begin
+    X:=math.RandG(MaxX/2,MaxX/8);
+    Y:=math.RandG(MaxY/2,MaxY/8);
     Points[i]:=PointF(X,Y);
   end;
   DrawPoints();
@@ -291,7 +324,10 @@ end;
 procedure TMainWindow.Lab1GenerateClick(Sender: TObject);
 begin
   //StatusBar.tab
-  GeneratePoints();
+  PointsMax.ResetFocus;
+  if RadioS.IsChecked then GeneratePointsSquare();
+  if RadioC.IsChecked then GeneratePointsCircle();
+  if RadioG.IsChecked then GeneratePointsGauss();
 end;
 procedure TMainWindow.Lab1StupidClick(Sender: TObject);
 begin
