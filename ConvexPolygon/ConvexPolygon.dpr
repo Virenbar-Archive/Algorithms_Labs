@@ -3,7 +3,8 @@ program ConvexPolygon;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  Main in 'Main.pas' {MainWindow};
+  Main in 'Main.pas' {MainWindow},
+  BTree in 'BTree.pas';
 
 {$R *.res}
 

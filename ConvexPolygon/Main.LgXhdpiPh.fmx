@@ -5,24 +5,17 @@ inherited MainWindow_LgXhdpiPh: TMainWindow_LgXhdpiPh
   inherited Pole: TImage
     Size.Width = 435.000000000000000000
   end
-  inherited CountResult: TEdit
-    Size.Height = 32.000000000000000000
+  inherited PointsMax: TNumberBox
+    HorzIncrement = 100.000000000000000000
   end
   inherited Computation: TAniIndicator
     Enabled = True
     Size.Width = 419.000000000000000000
   end
-  inherited StatusBar: TStatusBar
-    Position.Y = 673.000000000000000000
-    Size.Width = 450.000000000000000000
-  end
   inherited Time1: TEdit
     Size.Height = 32.000000000000000000
   end
   inherited Time2: TEdit
-    Size.Height = 32.000000000000000000
-  end
-  inherited Time3: TEdit
     Size.Height = 32.000000000000000000
   end
 end

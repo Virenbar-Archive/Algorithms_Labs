@@ -1,5 +1,8 @@
 inherited MainWindow_Windows: TMainWindow_Windows
   DesignerMasterStyle = 0
+  inherited PointsMax: TNumberBox
+    HorzIncrement = 100.000000000000000000
+  end
   inherited Computation: TAniIndicator
     Enabled = True
   end
