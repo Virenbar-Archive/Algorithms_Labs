@@ -7,28 +7,30 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Edit, FMX.EditBox, FMX.NumberBox,
   FMX.Menus,
-  System.Diagnostics,Math,System.Math.Vectors,System.Generics.Collections;
+  System.Diagnostics,Math,System.Math.Vectors,System.Generics.Collections,System.Generics.Defaults;
 
 type
   TMainWindow = class(TForm)
-    Pole: TImage;
-    PointsMax: TNumberBox;
-    MainMenu: TMainMenu;
-    Lab2Menu: TMenuItem;
+    Pole:         TImage;
+    PointsMax:    TNumberBox;
+    Computation:  TAniIndicator;
+    Time1:        TEdit;
+    Time2:        TEdit;
+    RadioS:       TRadioButton;
+    RadioC:       TRadioButton;
+    RadioG:       TRadioButton;
+    MainMenu:     TMainMenu;
+    Lab2Menu:     TMenuItem;
     Lab2Generate: TMenuItem;
-    Computation: TAniIndicator;
-    Time1: TEdit;
-    Time2: TEdit;
-    RadioS: TRadioButton;
-    RadioC: TRadioButton;
-    RadioG: TRadioButton;
     Lab2GiftWrap: TMenuItem;
-    Lab2Graham: TMenuItem;
+    Lab2Graham:   TMenuItem;
+    //
     procedure PointsMaxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Lab2GenerateClick(Sender: TObject);
     procedure Lab2GiftWrapClick(Sender: TObject);
     procedure Lab2GrahamClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -37,14 +39,11 @@ type
 
   TSingleArray = Array of single;
 var
-  MainWindow: TMainWindow;
-  Points: Array of TPointF;
-  MaxX,MaxY: integer;
-  PointsCount:integer;
-  Stopwatch:TStopwatch;
-
-  GSortX,GSortY:TSingleDynArray;
-  DominationPoints:Array of array of integer;
+  MainWindow:   TMainWindow;
+  Points:       Array of TPointF;
+  MaxX,MaxY:    Integer;
+  PointsCount:  Integer;
+  Stopwatch:    TStopwatch;
 
 implementation
 
@@ -59,6 +58,7 @@ begin
   PointsCount:=Trunc(PointsMax.Value);
 end;
 
+{
 function SortArray(Sort:TSingleDynArray): TSingleDynArray;
 var
   i,j:integer;
@@ -75,7 +75,9 @@ begin
   SetLength(Result,Length(Sort));
   Result:=Sort;
 end;
+//}
 
+{
 function BinarySearch(Sort:TSingleDynArray;Value:Single):Integer;
 var
   L,H:Integer;
@@ -94,6 +96,8 @@ begin
   else
     Result:=H;
 end;
+//}
+
 //Иницилизация при открытии
 procedure TMainWindow.FormCreate(Sender: TObject);
 var
@@ -191,14 +195,14 @@ end;
 
 procedure GiftWrap();
 var
-  i: Integer;
-  Start,NextP:Integer;
-  HullList:TList<Integer>;
-  Polygon:TPolygon;
-  P1,P2:TPointF;
-  MaxCos,CurCos:single;
+  Start,NextP,i :Integer;
+  MaxCos,CurCos :Single;
+  HullList      :TList<Integer>;
+  P1,P2         :TPointF;
+  Polygon       :TPolygon;
 begin
   HullList:=TList<Integer>.Create();
+
   Stopwatch.Reset;
   Stopwatch.Start;
 
@@ -242,10 +246,89 @@ begin
     end;
     if HullList.Contains(NextP) then break;
     HullList.Add(NextP);
-  end;
 
+    if false then
+    begin
+      MainWindow.Pole.Bitmap.Canvas.BeginScene();
+      MainWindow.Pole.Bitmap.Canvas.DrawLine(Points[HullList.Items[HullList.Count-2]],Points[HullList.Items[HullList.Count-1]],100);
+      MainWindow.Pole.Bitmap.Canvas.EndScene();
+      Application.ProcessMessages;
+      Sleep(100);
+    end;
+  end;
   Stopwatch.Stop;
   MainWindow.Time1.Text:=FloatToStr(Stopwatch.ElapsedMilliseconds/1000);
+
+  //{
+  SetLength(Polygon,HullList.Count);
+  for i := 0 to HullList.Count-1 do
+    Polygon[i]:=Points[HullList.Items[i]];
+  MainWindow.Pole.Bitmap.Canvas.BeginScene();
+  MainWindow.Pole.Bitmap.Canvas.DrawPolygon(Polygon,100);
+  MainWindow.Pole.Bitmap.Canvas.EndScene();
+  //}
+  {
+  MainWindow.Pole.Bitmap.Canvas.BeginScene();
+  MainWindow.Pole.Bitmap.Canvas.DrawLine(Points[HullList.Items[HullList.Count-1]],Points[HullList.Items[0]],100);
+  MainWindow.Pole.Bitmap.Canvas.EndScene();
+  }
+  HullList.Destroy;
+end;
+
+{------------------------------------------------------------------------------}
+
+procedure Graham();
+type
+  PointAngle = record
+    ID:Integer;
+    Angle:Single;
+  end;
+var
+  Start,NextP,i :Integer;
+  //Cos           :Single;
+  Comparer      :IComparer<PointAngle>;
+  SortList      :TList<PointAngle>;
+  HullList      :TList<Integer>;
+  P1,P2         :TPointF;
+  CurPoint      :PointAngle;
+  Polygon       :TPolygon;
+begin
+  {Сравниватель по углам}
+  Comparer:=TDelegatedComparer<PointAngle>.Create(
+  function(const Left, Right: PointAngle): Integer
+  begin
+    Result := Round(Left.Angle - Right.Angle);
+  end
+  );
+  //---------
+
+  SortList:=TList<PointAngle>.Create(Comparer);
+  HullList:=TList<Integer>.Create();
+
+  Stopwatch.Reset;
+  Stopwatch.Start;
+
+  //Начальная точка(левая верхняя)
+  Start:=0;
+  for i := 1 to PointsCount-1 do
+  begin
+    if ((Points[i].X<Points[Start].X) or ((Points[i].X=Points[Start].X) and (Points[i].Y<Points[Start].Y))) then Start:=i;
+  end;
+  HullList.Add(Start);
+
+  for i := 0 to PointsCount-1 do
+  begin
+    if i=HullList[0] then continue;
+    P1:=PointF(0,-1);
+    P2:=PointF(Points[i].X-Points[Start].X,Points[i].Y-Points[Start].Y);
+    //Cos:=(P1.X*P2.X+P1.Y*P2.Y)/(sqrt(P1.X*P1.X+P1.Y*P1.Y)*sqrt(P2.X*P2.X+P2.Y*P2.Y));
+    CurPoint.ID:=i;
+    CurPoint.Angle:=(P1.X*P2.X+P1.Y*P2.Y)/(sqrt(P1.X*P1.X+P1.Y*P1.Y)*sqrt(P2.X*P2.X+P2.Y*P2.Y))+1;
+    SortList.Add(CurPoint);
+  end;
+  SortList.Sort;
+  for i := 0 to SortList.Count-1 do
+    HullList.Add(SortList[i].ID);
 
   SetLength(Polygon,HullList.Count);
   for i := 0 to HullList.Count-1 do
@@ -253,13 +336,9 @@ begin
   MainWindow.Pole.Bitmap.Canvas.BeginScene();
   MainWindow.Pole.Bitmap.Canvas.DrawPolygon(Polygon,100);
   MainWindow.Pole.Bitmap.Canvas.EndScene();
-end;
 
-procedure Graham();
-var
-i:integer;
-begin
-
+  HullList.Destroy;
+  SortList.Destroy;
 end;
 
 //------------------------------------------------------------------------------
@@ -282,6 +361,27 @@ end;
 procedure TMainWindow.Lab2GrahamClick(Sender: TObject);
 begin
   Graham();
+end;
+
+procedure TMainWindow.Button1Click(Sender: TObject);
+var
+  I: Integer;
+begin
+  for I := 0 to 5 do
+  begin
+    GeneratePointsSquare();
+    GiftWrap();
+    Application.ProcessMessages;
+    Sleep(500);
+    GeneratePointsCircle();
+    GiftWrap();
+    Application.ProcessMessages;
+    Sleep(500);
+    GeneratePointsGauss();
+    GiftWrap();
+    Application.ProcessMessages;
+    Sleep(500);
+  end;
 end;
 
 end.
