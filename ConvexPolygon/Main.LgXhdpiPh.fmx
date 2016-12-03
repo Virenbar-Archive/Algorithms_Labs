@@ -18,4 +18,8 @@ inherited MainWindow_LgXhdpiPh: TMainWindow_LgXhdpiPh
   inherited Time2: TEdit
     Size.Height = 32.000000000000000000
   end
+  inherited Redraw: TButton
+    Size.Width = 48.000000000000000000
+    Size.Height = 48.000000000000000000
+  end
 end

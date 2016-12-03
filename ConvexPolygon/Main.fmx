@@ -103,4 +103,22 @@ object MainWindow: TMainWindow
     TabOrder = 8
     Text = #1043#1072#1091#1089#1089
   end
+  object Button1: TButton
+    Position.X = 552.000000000000000000
+    Position.Y = 496.000000000000000000
+    TabOrder = 11
+    Text = 'Button1'
+    OnClick = Button1Click
+  end
+  object Redraw: TButton
+    Position.X = 240.000000000000000000
+    Position.Y = 440.000000000000000000
+    Size.Width = 25.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'stoptoolbutton'
+    TabOrder = 13
+    Text = 'Redraw'
+    OnClick = RedrawClick
+  end
 end

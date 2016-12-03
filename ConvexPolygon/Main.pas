@@ -24,6 +24,8 @@ type
     Lab2Generate: TMenuItem;
     Lab2GiftWrap: TMenuItem;
     Lab2Graham:   TMenuItem;
+    Button1: TButton;
+    Redraw: TButton;
     //
     procedure PointsMaxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -31,6 +33,7 @@ type
     procedure Lab2GiftWrapClick(Sender: TObject);
     procedure Lab2GrahamClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure RedrawClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -58,6 +61,10 @@ begin
   PointsCount:=Trunc(PointsMax.Value);
 end;
 
+function NoNoNo(Point:TPointF):TPointF;
+begin
+  Result:=PointF(Floor(Point.X)+0.5,Floor(Point.Y)+0.5);
+end;
 {
 function SortArray(Sort:TSingleDynArray): TSingleDynArray;
 var
@@ -173,6 +180,7 @@ begin
   DrawPoints();
 end;
 
+//Отрисовка точек
 procedure DrawPoints();
 var
 i:Integer;
@@ -193,6 +201,8 @@ begin
   end;
 end;
 
+{------------------------------------------------------------------------------}
+
 procedure GiftWrap();
 var
   Start,NextP,i :Integer;
@@ -200,72 +210,81 @@ var
   HullList      :TList<Integer>;
   P1,P2         :TPointF;
   Polygon       :TPolygon;
+  T             :Integer;
 begin
   HullList:=TList<Integer>.Create();
 
   Stopwatch.Reset;
   Stopwatch.Start;
-
-  //Начальная точка(левая верхняя)
-  Start:=0;
-  for i := 1 to PointsCount-1 do
+  for T := 1 to 1000 do
   begin
-    if ((Points[i].X<Points[Start].X) or ((Points[i].X=Points[Start].X) and (Points[i].Y<Points[Start].Y))) then Start:=i;
-  end;
-  HullList.Add(Start);
-  //Цикл
-  while true do
-  begin
-    MaxCos:=-1;
-    for i := 0 to PointsCount-1 do
+    HullList.Clear;
+    //Начальная точка(левая верхняя)
+    Start:=0;
+    for i := 1 to PointsCount-1 do
     begin
-      if ((HullList.Contains(i)) and (i<>Start)) then Continue;//Проверка точки на наличие в оболочке
-      if HullList.Capacity=1 then
-      begin
-        P1:=PointF(0,-1);
-        P2:=PointF(Points[i].X-Points[Start].X,Points[i].Y-Points[Start].Y);
-      end
-      else
-      begin
-        P1:=PointF(
-          Points[HullList.Items[HullList.Count-1]].X-Points[HullList.Items[HullList.Count-2]].X,
-          Points[HullList.Items[HullList.Count-1]].Y-Points[HullList.Items[HullList.Count-2]].Y
-        );
-        P2:=PointF(
-          Points[i].X-Points[HullList.Items[HullList.Count-1]].X,
-          Points[i].Y-Points[HullList.Items[HullList.Count-1]].Y
-        );
-      end;
-      CurCos:=(P1.X*P2.X+P1.Y*P2.Y)/(sqrt(P1.X*P1.X+P1.Y*P1.Y)*sqrt(P2.X*P2.X+P2.Y*P2.Y));
-      if CurCos>MaxCos then
-      begin
-        NextP:=i;
-        MaxCos:=CurCos;
-      end;
-
+      if ((Points[i].X<Points[Start].X) or ((Points[i].X=Points[Start].X) and (Points[i].Y<Points[Start].Y))) then Start:=i;
     end;
-    if HullList.Contains(NextP) then break;
-    HullList.Add(NextP);
-
-    if false then
+    HullList.Add(Start);
+    //Цикл
+    while true do
     begin
-      MainWindow.Pole.Bitmap.Canvas.BeginScene();
-      MainWindow.Pole.Bitmap.Canvas.DrawLine(Points[HullList.Items[HullList.Count-2]],Points[HullList.Items[HullList.Count-1]],100);
-      MainWindow.Pole.Bitmap.Canvas.EndScene();
-      Application.ProcessMessages;
-      Sleep(100);
+      MaxCos:=-1;
+      for i := 0 to PointsCount-1 do
+      begin
+        if ((HullList.Contains(i)) and (i<>Start)) then Continue;//Проверка точки на наличие в оболочке
+        if HullList.Capacity=1 then
+        begin
+          P1:=PointF(0,-1);
+          P2:=PointF(Points[i].X-Points[Start].X,Points[i].Y-Points[Start].Y);
+        end
+        else
+        begin
+          P1:=PointF(
+            Points[HullList.Items[HullList.Count-1]].X-Points[HullList.Items[HullList.Count-2]].X,
+            Points[HullList.Items[HullList.Count-1]].Y-Points[HullList.Items[HullList.Count-2]].Y
+          );
+          P2:=PointF(
+            Points[i].X-Points[HullList.Items[HullList.Count-1]].X,
+            Points[i].Y-Points[HullList.Items[HullList.Count-1]].Y
+          );
+        end;
+        CurCos:=(P1.X*P2.X+P1.Y*P2.Y)/(sqrt(P1.X*P1.X+P1.Y*P1.Y)*sqrt(P2.X*P2.X+P2.Y*P2.Y));
+        if CurCos>MaxCos then
+        begin
+          NextP:=i;
+          MaxCos:=CurCos;
+        end;
+
+      end;
+      if HullList.Contains(NextP) then break;
+      HullList.Add(NextP);
+
+      {
+      with  MainWindow.Pole.Bitmap.Canvas do
+      begin
+        BeginScene();
+        DrawLine(Points[HullList.Items[HullList.Count-2]],Points[HullList.Items[HullList.Count-1]],100);
+        EndScene();
+        Application.ProcessMessages;
+        Sleep(100);
+      end;
+      //}
     end;
   end;
   Stopwatch.Stop;
-  MainWindow.Time1.Text:=FloatToStr(Stopwatch.ElapsedMilliseconds/1000);
+  MainWindow.Time1.Text:=FloatToStr(Stopwatch.ElapsedMilliseconds/1000/1000);
 
   //{
   SetLength(Polygon,HullList.Count);
   for i := 0 to HullList.Count-1 do
-    Polygon[i]:=Points[HullList.Items[i]];
-  MainWindow.Pole.Bitmap.Canvas.BeginScene();
-  MainWindow.Pole.Bitmap.Canvas.DrawPolygon(Polygon,100);
-  MainWindow.Pole.Bitmap.Canvas.EndScene();
+    Polygon[i]:=NoNoNo(Points[HullList.Items[i]]);
+  with  MainWindow.Pole.Bitmap.Canvas do
+  begin
+    BeginScene();
+    DrawPolygon(Polygon,100);
+    EndScene();
+  end;
   //}
   {
   MainWindow.Pole.Bitmap.Canvas.BeginScene();
@@ -281,62 +300,103 @@ procedure Graham();
 type
   PointAngle = record
     ID:Integer;
-    Angle:Single;
+    Angle:Integer;
   end;
 var
-  Start,NextP,i :Integer;
-  //Cos           :Single;
+  Start,i       :Integer;
   Comparer      :IComparer<PointAngle>;
   SortList      :TList<PointAngle>;
   HullList      :TList<Integer>;
-  P1,P2         :TPointF;
+  P0,P1,P2,Temp :TPointF;
   CurPoint      :PointAngle;
   Polygon       :TPolygon;
+  T             :Integer;
 begin
   {Сравниватель по углам}
   Comparer:=TDelegatedComparer<PointAngle>.Create(
   function(const Left, Right: PointAngle): Integer
   begin
-    Result := Round(Left.Angle - Right.Angle);
+    Result := Left.Angle - Right.Angle;
   end
   );
   //---------
-
   SortList:=TList<PointAngle>.Create(Comparer);
   HullList:=TList<Integer>.Create();
 
   Stopwatch.Reset;
   Stopwatch.Start;
-
-  //Начальная точка(левая верхняя)
-  Start:=0;
-  for i := 1 to PointsCount-1 do
+  for T := 1 to 1000 do
   begin
-    if ((Points[i].X<Points[Start].X) or ((Points[i].X=Points[Start].X) and (Points[i].Y<Points[Start].Y))) then Start:=i;
-  end;
-  HullList.Add(Start);
+    SortList.Clear;
+    HullList.Clear;
+    //Начальная точка(левая верхняя)
+    Start:=0;
+    for i := 1 to PointsCount-1 do
+    begin
+      if ((Points[i].X<Points[Start].X) or ((Points[i].X=Points[Start].X) and (Points[i].Y<Points[Start].Y))) then Start:=i;
+    end;
+    HullList.Add(Start);
 
-  for i := 0 to PointsCount-1 do
-  begin
-    if i=HullList[0] then continue;
-    P1:=PointF(0,-1);
-    P2:=PointF(Points[i].X-Points[Start].X,Points[i].Y-Points[Start].Y);
-    //Cos:=(P1.X*P2.X+P1.Y*P2.Y)/(sqrt(P1.X*P1.X+P1.Y*P1.Y)*sqrt(P2.X*P2.X+P2.Y*P2.Y));
-    CurPoint.ID:=i;
-    CurPoint.Angle:=(P1.X*P2.X+P1.Y*P2.Y)/(sqrt(P1.X*P1.X+P1.Y*P1.Y)*sqrt(P2.X*P2.X+P2.Y*P2.Y))+1;
-    SortList.Add(CurPoint);
+    for i := 0 to PointsCount-1 do
+    begin
+      if i=HullList[0] then continue;
+      P1:=PointF(0,-1);
+      P2:=PointF(Points[i].X-Points[Start].X,Points[i].Y-Points[Start].Y);
+      CurPoint.ID:=i;
+      CurPoint.Angle:=Round((P1.X*P2.X+P1.Y*P2.Y)/(sqrt(P1.X*P1.X+P1.Y*P1.Y)*sqrt(P2.X*P2.X+P2.Y*P2.Y))*10000000);
+      SortList.Add(CurPoint);
+    end;
+    SortList.Sort;
+    for i := 0 to SortList.Count-1 do
+      HullList.Add(SortList[i].ID);
+
+    i:=0;
+    P0:=Points[HullList[i]];
+    P1:=Points[HullList[i+1]];
+    P2:=Points[HullList[i+2]];
+
+    while true do
+    begin
+
+      if (P1.X - P0.X)*(P2.Y - P0.Y) - (P2.X - P0.X)*(P1.Y - P0.Y)>=0 then
+      begin
+        HullList.Delete(i+1);//P1
+        if i>0 then Dec(i);
+        P0:=Points[HullList[i]];
+        P1:=Points[HullList[i+1]];
+        P2:=Points[HullList[i+2]];
+      end
+      else
+      begin
+        Inc(i);
+        P0:=Points[HullList[i]];
+        P1:=Points[HullList[i+1]];
+        P2:=Points[HullList[i+2]];
+      end;
+
+      if HullList[i+2]=HullList[HullList.Count-1] then break;
+
+    end;
   end;
-  SortList.Sort;
-  for i := 0 to SortList.Count-1 do
-    HullList.Add(SortList[i].ID);
+  Stopwatch.Stop;
+  MainWindow.Time2.Text:=FloatToStr(Stopwatch.ElapsedMilliseconds/1000/1000);
 
   SetLength(Polygon,HullList.Count);
   for i := 0 to HullList.Count-1 do
-    Polygon[i]:=Points[HullList.Items[i]];
-  MainWindow.Pole.Bitmap.Canvas.BeginScene();
-  MainWindow.Pole.Bitmap.Canvas.DrawPolygon(Polygon,100);
-  MainWindow.Pole.Bitmap.Canvas.EndScene();
-
+    Polygon[i]:=NoNoNo(Points[HullList.Items[i]]);
+  with  MainWindow.Pole.Bitmap.Canvas do
+  begin
+    BeginScene();
+    DrawPolygon(Polygon,100);
+    Stroke.Color := TAlphaColors.Red;
+    for i := 0 to HullList.Count-1 do
+    begin
+      Temp:=PointF(Floor(Points[HullList.Items[i]].X)+0.5,Floor(Points[HullList.Items[i]].Y)+0.5);
+      DrawLine(Temp,Temp,100);
+    end;
+    Stroke.Color := TAlphaColors.Black;
+    EndScene();
+  end;
   HullList.Destroy;
   SortList.Destroy;
 end;
@@ -363,24 +423,21 @@ begin
   Graham();
 end;
 
+procedure TMainWindow.RedrawClick(Sender: TObject);
+begin
+  DrawPoints();
+end;
+
 procedure TMainWindow.Button1Click(Sender: TObject);
 var
-  I: Integer;
+  I:integer;
 begin
-  for I := 0 to 5 do
+  for I := 1 to 10 do
   begin
-    GeneratePointsSquare();
-    GiftWrap();
-    Application.ProcessMessages;
-    Sleep(500);
     GeneratePointsCircle();
-    GiftWrap();
-    Application.ProcessMessages;
+    Graham();
     Sleep(500);
-    GeneratePointsGauss();
-    GiftWrap();
     Application.ProcessMessages;
-    Sleep(500);
   end;
 end;
 
