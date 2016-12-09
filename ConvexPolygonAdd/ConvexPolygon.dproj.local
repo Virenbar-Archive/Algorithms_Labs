@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.577,C:\Users\Artem-R\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Users\Artem-R\Documents\Embarcadero\Studio\Projects\Main.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.190,=C:\Users\Artem-R\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.550,C:\Users\Artem-R\Documents\Embarcadero\Studio\Projects\Main.fmx=C:\Delphi\Points\Main.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.094,C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\ConvexPolygon.dproj=C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\Новая папка\ConvexPolygon.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.550,C:\Users\Artem-R\Documents\Embarcadero\Studio\Projects\Main.pas=C:\Delphi\Points\Main.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.577,C:\Users\Artem-R\Documents\Embarcadero\Studio\Projects\Unit1.fmx=C:\Users\Artem-R\Documents\Embarcadero\Studio\Projects\Main.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.585,C:\Users\Artem-R\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Delphi\Points\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.230,C:\Delphi\Points\Project1.dproj=C:\Delphi\Points\Points.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.925,=C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.949,C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\Unit1.pas=C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\BTree.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.944,C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\Main.pas=C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\Новая папка\Main.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.611,C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\Points.dproj=C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\ConvexPolygon.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.944,C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\Main.fmx=C:\VCS\Bitbucket\algorithmslab\ConvexPolygon\Новая папка\Main.fmx</Transaction>
+  </Transactions>
+</BorlandProject>

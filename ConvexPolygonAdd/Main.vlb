@@ -1,0 +1,11 @@
+﻿[Pole]
+Coordinates=64,10,45,58
+
+[]
+Coordinates=10,10,44,58
+ExplicitSubNodes=Visible
+Visible=True
+
+[PointsMax]
+Coordinates=10,78,96,58
+

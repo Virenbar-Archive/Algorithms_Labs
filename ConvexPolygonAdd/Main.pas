@@ -26,6 +26,7 @@ type
     Lab2Graham:   TMenuItem;
     Button1: TButton;
     Redraw: TButton;
+    AddMousePoint: TCheckBox;
     //
     procedure PointsMaxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -34,16 +35,19 @@ type
     procedure Lab2GrahamClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure RedrawClick(Sender: TObject);
+    procedure PoleClick(Sender: TObject);
+    procedure PoleMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Single);
   private
     { Private declarations }
   public
     { Public declarations }
   end;
 
-  TSingleArray = Array of single;
+  TPointFArray = Array of TPointF;
 var
   MainWindow:   TMainWindow;
-  Points:       Array of TPointF;
+  Points:       TPointFArray;
   MaxX,MaxY:    Integer;
   PointsCount:  Integer;
   Stopwatch:    TStopwatch;
@@ -60,6 +64,7 @@ procedure TMainWindow.PointsMaxChange(Sender: TObject);
 begin
   PointsCount:=Trunc(PointsMax.Value);
 end;
+
 //Нахрен кривой антиалиасинг
 function NoNoNo(Point:TPointF):TPointF;
 begin
@@ -140,19 +145,20 @@ begin
   DrawPoints();
 end;
 
-procedure GeneratePointsGauss();
+function GeneratePointsGauss(N:Integer):TPointFArray;
 var
   i:Integer;
   x,y:Extended;
+
 begin
-  SetLength(Points,PointsCount);
-  for i := 0 to PointsCount-1 do
+  SetLength(Result,N);
+  for i := 0 to N-1 do
   begin
     X:=math.RandG(MaxX/2,MaxX/16);
     Y:=math.RandG(MaxY/2,MaxY/16);
-    Points[i]:=PointF(X,Y);
+    Result[i]:=PointF(X,Y);
   end;
-  DrawPoints();
+  //DrawPoints();
 end;
 
 {------------------------------------------------------------------------------}
@@ -358,6 +364,11 @@ begin
   HullList.Destroy;
   SortList.Destroy;
 end;
+{------------------------------------------------------------------------------}
+procedure AddPoint();
+begin
+
+end;
 
 //------------------------------------------------------------------------------
 //Кнопки
@@ -368,7 +379,11 @@ begin
   PointsMax.ResetFocus;
   if RadioS.IsChecked then GeneratePointsSquare();
   if RadioC.IsChecked then GeneratePointsCircle();
-  if RadioG.IsChecked then GeneratePointsGauss();
+  if RadioG.IsChecked then begin
+    SetLength(Points,PointsCount);
+    Points:=GeneratePointsGauss(PointsCount);
+    DrawPoints();
+  end;
 end;
 
 procedure TMainWindow.Lab2GiftWrapClick(Sender: TObject);
@@ -390,7 +405,7 @@ procedure TMainWindow.Button1Click(Sender: TObject);
 var
   I:integer;
 begin
-  for I := 1 to 10 do
+  {for I := 1 to 10 do
   begin
     GeneratePointsGauss();
     Graham();
@@ -399,7 +414,28 @@ begin
   end;
   Pole.Bitmap.Canvas.BeginScene();
   Pole.Bitmap.Canvas.DrawLine(PointF(100,100),PointF(200,200),100);
-  Pole.Bitmap.Canvas.EndScene();
+  Pole.Bitmap.Canvas.EndScene();}
+end;
+
+procedure TMainWindow.PoleClick(Sender: TObject);
+begin
+  //fsdf
+  //SetLength(Points,Length(Points)+1);
+  //Points[Length(Points)-1]:=PointF();
+end;
+
+procedure TMainWindow.PoleMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Single);
+begin
+  if AddMousePoint.IsChecked then
+  begin
+    Inc(PointsCount);
+    SetLength(Points,Length(Points)+1);
+    Points[Length(Points)-1]:=PointF(X,Y);
+    //AddPoint();
+    DrawPoints();
+    Graham();
+  end;
 end;
 
 end.

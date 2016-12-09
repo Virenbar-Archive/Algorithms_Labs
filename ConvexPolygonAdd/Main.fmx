@@ -2,7 +2,7 @@ object MainWindow: TMainWindow
   Left = 0
   Top = 0
   BorderStyle = Single
-  Caption = #1050#1072#1094' 2: '#1057#1091#1076#1085#1099#1081' '#1072#1083#1075#1086#1088#1080#1090#1084
+  Caption = #1050#1072#1094' 3: '#1042#1086#1089#1089#1090#1072#1085#1080#1077' '#1072#1083#1075#1086#1088#1080#1090#1084#1086#1074
   ClientHeight = 596
   ClientWidth = 639
   Position = Designed
@@ -21,6 +21,8 @@ object MainWindow: TMainWindow
     Size.Width = 624.000000000000000000
     Size.Height = 425.000000000000000000
     Size.PlatformDefault = False
+    OnClick = PoleClick
+    OnMouseDown = PoleMouseDown
   end
   object PointsMax: TNumberBox
     Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -37,8 +39,8 @@ object MainWindow: TMainWindow
     OnChange = PointsMaxChange
   end
   object MainMenu: TMainMenu
-    Left = 16
-    Top = 536
+    Left = 592
+    Top = 552
     object Lab2Menu: TMenuItem
       Text = #1052#1077#1085#1102
       object Lab2Generate: TMenuItem
@@ -121,5 +123,14 @@ object MainWindow: TMainWindow
     TabOrder = 13
     Text = 'Redraw'
     OnClick = RedrawClick
+  end
+  object AddMousePoint: TCheckBox
+    Position.X = 8.000000000000000000
+    Position.Y = 512.000000000000000000
+    Size.Width = 129.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 15
+    Text = #1044#1086#1073#1072#1074#1083#1077#1085#1080#1077' '#1090#1086#1095#1082#1080
   end
 end

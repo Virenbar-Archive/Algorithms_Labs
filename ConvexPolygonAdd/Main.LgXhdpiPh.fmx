@@ -1,0 +1,25 @@
+inherited MainWindow_LgXhdpiPh: TMainWindow_LgXhdpiPh
+  ClientHeight = 695
+  ClientWidth = 450
+  DesignerMasterStyle = 3
+  inherited Pole: TImage
+    Size.Width = 435.000000000000000000
+  end
+  inherited PointsMax: TNumberBox
+    HorzIncrement = 100.000000000000000000
+  end
+  inherited Computation: TAniIndicator
+    Enabled = True
+    Size.Width = 419.000000000000000000
+  end
+  inherited Time1: TEdit
+    Size.Height = 32.000000000000000000
+  end
+  inherited Time2: TEdit
+    Size.Height = 32.000000000000000000
+  end
+  inherited Redraw: TButton
+    Size.Width = 48.000000000000000000
+    Size.Height = 48.000000000000000000
+  end
+end
