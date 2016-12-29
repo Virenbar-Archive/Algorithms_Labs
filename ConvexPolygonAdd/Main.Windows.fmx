@@ -6,4 +6,7 @@ inherited MainWindow_Windows: TMainWindow_Windows
   inherited Computation: TAniIndicator
     Enabled = True
   end
+  inherited Button1: TButton
+    Visible = False
+  end
 end

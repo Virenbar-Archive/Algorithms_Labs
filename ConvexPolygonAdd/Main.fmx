@@ -30,7 +30,7 @@ object MainWindow: TMainWindow
     Cursor = crIBeam
     Min = 3.000000000000000000
     Max = 10000000.000000000000000000
-    Value = 1000.000000000000000000
+    Value = 10.000000000000000000
     Position.X = 136.000000000000000000
     Position.Y = 440.000000000000000000
     VertIncrement = 100.000000000000000000
@@ -87,13 +87,13 @@ object MainWindow: TMainWindow
     Size.PlatformDefault = False
   end
   object RadioS: TRadioButton
-    IsChecked = True
     Position.X = 8.000000000000000000
     Position.Y = 440.000000000000000000
     TabOrder = 9
     Text = #1055#1088#1103#1084#1086#1091#1075#1086#1083#1100#1085#1080#1082
   end
   object RadioC: TRadioButton
+    IsChecked = True
     Position.X = 8.000000000000000000
     Position.Y = 464.000000000000000000
     TabOrder = 7
@@ -109,8 +109,7 @@ object MainWindow: TMainWindow
     Position.X = 552.000000000000000000
     Position.Y = 496.000000000000000000
     TabOrder = 11
-    Text = 'Button1'
-    Visible = False
+    Text = '123'
     OnClick = Button1Click
   end
   object Redraw: TButton
